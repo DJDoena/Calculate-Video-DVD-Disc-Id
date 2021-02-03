@@ -14,7 +14,7 @@ namespace CalculateDvdDiscId
     {
         private const int MaxReadOutLength = 65_536;
 
-        private const string VideoFolder = "VIDEO_TS";
+        private const string VideoFolderName = "VIDEO_TS";
 
         private static readonly DateTime _baseDateUtc = new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -24,7 +24,7 @@ namespace CalculateDvdDiscId
 
             //Step 1:
             //The filenames of the VIDEO_TS directory are collected and sorted alphabetically
-            IEnumerable<string> fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolder), "*.*", SearchOption.TopDirectoryOnly);
+            IEnumerable<string> fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolderName), "*.*", SearchOption.TopDirectoryOnly);
 
             string result = Calculate(drive, fileNames);
 
@@ -39,10 +39,12 @@ namespace CalculateDvdDiscId
         {
             DriveInfo drive = GetDrive(driveLetter);
 
+            string videoFolderName = Path.Combine(drive.Name, VideoFolderName);
+
             //Step 1:
             //The filenames of the VIDEO_TS directory are collected and sorted alphabetically, but only VIDEO_TS.* and VTS_01_0.*
-            IEnumerable<string> fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolder), "VIDEO_TS.*", SearchOption.TopDirectoryOnly)
-                .Concat(Directory.GetFiles(Path.Combine(drive.Name, VideoFolder), "VTS_01_0.*", SearchOption.TopDirectoryOnly));
+            IEnumerable<string> fileNames = Directory.GetFiles(videoFolderName, "VIDEO_TS.*", SearchOption.TopDirectoryOnly)
+                .Concat(Directory.GetFiles(videoFolderName, "VTS_01_0.*", SearchOption.TopDirectoryOnly));
 
             string result = Calculate(drive, fileNames);
 
@@ -56,34 +58,27 @@ namespace CalculateDvdDiscId
                 throw new ArgumentException(nameof(driveLetter));
             }
 
-            DriveInfo drive = new DriveInfo(driveLetter);
+            DriveInfo result = new DriveInfo(driveLetter);
 
-            if (!drive.IsReady)
+            if (!result.IsReady)
             {
                 throw new ArgumentException("Drive is not ready!", nameof(driveLetter));
             }
 
-            DirectoryInfo folder = new DirectoryInfo(Path.Combine(drive.Name, VideoFolder));
+            DirectoryInfo folder = new DirectoryInfo(Path.Combine(result.Name, VideoFolderName));
 
             if (!folder.Exists)
             {
                 throw new ArgumentException("Drive does not contain a video DVD!", nameof(driveLetter));
             }
 
-            return drive;
+            return result;
         }
 
         private static string Calculate(DriveInfo drive, IEnumerable<string> fileNames)
         {
             List<FileInfo> files = fileNames.Select(fileName => new FileInfo(fileName)).ToList();
 
-            string result = Calculate(drive, files);
-
-            return result;
-        }
-
-        private static string Calculate(DriveInfo drive, List<FileInfo> files)
-        {
             files.Sort(CompareFiles);
 
             List<byte[]> hashes = new List<byte[]>();
@@ -100,10 +95,12 @@ namespace CalculateDvdDiscId
             //If present, the first 65,536 bytes of "VIDEO_TS.IFO are read and added to the CRC (if smaller then the entire file is added)
             AddFileContentHash(drive, "VIDEO_TS.IFO", hashes);
 
-            //Note: On page 19 the patents talks about "the first VTSI file ("VIDEO_TS\VTS_xx_0.IFO")" but on page 20, it explicitly specifies "VTS_01_0.IFO".
+            //Note: On page 19 the patents talks about "the first VTSI file ('VIDEO_TS\VTS_xx_0.IFO')"
+            //      but on page 20 it explicitly specifies "VTS_01_0.IFO".
             //Step 4:
             //The data from the first VTSI file ("VIDEO_TS\VTS_xx_0.IFO") is computed in the CRC.
             string vtsFileName = GetVtsFileName(drive);
+
             //If present, the first 65,536 bytes of "VTS_01_0.IFO" are read and added to the CRC (if smaller then the entire file is added)
             AddFileContentHash(drive, vtsFileName, hashes);
 
@@ -118,10 +115,21 @@ namespace CalculateDvdDiscId
 
         private static int CompareFiles(FileInfo left, FileInfo right)
         {
-            int compare = left.Name.ToUpper().CompareTo(right.Name.ToUpper());
+            string leftName = NormalizeFileName(left);
 
-            return compare;
+            string rightName = NormalizeFileName(right);
+
+            int result = leftName.CompareTo(rightName);
+
+            return result;
         }
+
+        /// <remarks>
+        /// UDF is case sensitive. The DVD standard mandates upper case filename, hence all compliant DVDs will have all upper case file names
+        /// in VIDEO_TS for the UDF filesystem.
+        /// However, just to be on the save side, make sure it is upper for non-compliant DVDs.
+        /// </remarks>
+        private static string NormalizeFileName(FileInfo file) => file.Name.ToUpper();
 
         private static void AddFileMetaHash(FileInfo file, List<byte[]> hashes)
         {
@@ -144,14 +152,17 @@ namespace CalculateDvdDiscId
             byte[] fileSizeBytes = BitConverter.GetBytes(fileSize);
 
             //BYTE: Filename [filename Length]
-            byte[] nameBytes = Encoding.UTF8.GetBytes(file.Name.ToUpper());
+
+            string fileName = NormalizeFileName(file);
+
+            byte[] nameBytes = Encoding.UTF8.GetBytes(fileName);
 
             //all data fields are in LSB first
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(nanoSecondBytes);
                 Array.Reverse(fileSizeBytes);
-                Array.Reverse(nameBytes); //untested, if Encoding.UTF8.GetBytes() also needs to be reversed on a BigEndian system
+                Array.Reverse(nameBytes);      //untested if Encoding.UTF8.GetBytes() also needs to be reversed on a BigEndian system
             }
 
             List<byte[]> fileHashes = new List<byte[]>()
@@ -169,7 +180,7 @@ namespace CalculateDvdDiscId
 
         private static void AddFileContentHash(DriveInfo drive, string fileName, List<byte[]> hashes)
         {
-            FileInfo file = new FileInfo(Path.Combine(Path.Combine(drive.Name, VideoFolder), fileName));
+            FileInfo file = new FileInfo(Path.Combine(Path.Combine(drive.Name, VideoFolderName), fileName));
 
             //If present
             if (file.Exists)
@@ -193,13 +204,13 @@ namespace CalculateDvdDiscId
 
         private static string GetVtsFileName(DriveInfo drive)
         {
-            IEnumerable<string> fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolder), "VTS_*_0.IFO", SearchOption.TopDirectoryOnly);
+            IEnumerable<string> fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolderName), "VTS_*_0.IFO", SearchOption.TopDirectoryOnly);
 
             List<FileInfo> files = fileNames.Select(fileName => new FileInfo(fileName)).ToList();
 
             files.Sort(CompareFiles);
 
-            string result = files.FirstOrDefault().Name ?? "VTS_01_0.IFO";
+            string result = files.FirstOrDefault()?.Name ?? "VTS_01_0.IFO";
 
             return result;
         }
