@@ -1,4 +1,4 @@
-﻿namespace CalculateDvdDiscId
+﻿namespace DoenaSoft.CalculateDvdDiscId
 {
     partial class DvdDiscIdCalculator
     {

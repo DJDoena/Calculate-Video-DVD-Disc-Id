@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CalculateDvdDiscId
+namespace DoenaSoft.CalculateDvdDiscId
 {
     /// <summary>
     /// Based on US patent 6,871,012 B1
