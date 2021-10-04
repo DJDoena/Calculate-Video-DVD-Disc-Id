@@ -108,7 +108,7 @@ namespace DoenaSoft.CalculateDvdDiscId
 
             ulong hash = Crc64.Calculate(hashBytes);
 
-            string result = hash.ToString("X");
+            string result = hash.ToString("X").PadLeft(16, '0');
 
             return result;
         }
