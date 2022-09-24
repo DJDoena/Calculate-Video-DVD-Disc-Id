@@ -82,7 +82,7 @@
   <ItemGroup>
     <None Include="CalculateDvdDiscIdLibrary.nuspec" />
     <None Include="CalculateDvdDiscIdLibrary.snk" />
-    <None Include="DoenaSoft.CalculateDvdDiscIdLibrary.props" />
+    <None Include="DoenaSoft.CalculateDvdDiscId.props" />
   </ItemGroup>
   <ItemGroup>
     <None Include="djdsoft.png" />
