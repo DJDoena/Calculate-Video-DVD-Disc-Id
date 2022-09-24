@@ -13,7 +13,7 @@ env:
   SOLUTION_FILE: CalculateDvdDiscIdLibrary.sln
   PROJECT_FILE: CalculateDvdDiscIdLibrary.csproj
   PROJECT_FOLDER: CalculateDvdDiscIdLibrary
-  NUGET_SPEC: DVDProfilerHelper.nuspec
+  NUGET_SPEC: CalculateDvdDiscIdLibrary.nuspec
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORMX64: x64
   BUILD_PLATFORMX86: x86
