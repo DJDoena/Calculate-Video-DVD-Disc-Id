@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>DoenaSoft.CalculateDvdDiscId</id>
+    <version>1.0.1</version>
+    <title>DoenaSoft.CalculateDvdDiscId</title>
+    <authors>DJ Doena</authors>
+    <icon>images\djdsoft.png</icon>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/DJDoena/Calculate-Video-DVD-Disc-Id</projectUrl>
+    <description>Calculates the Disc Id of a Video DVD for Windows the same way Windows XP, Vista, 7 and 8 had done and also Windows 10 before the 1809 update.</description>
+    <copyright>2021 - 2022</copyright>
+    <tags>disc-id, dvdprofiler, invelos</tags>
+  </metadata>
+  <files>
+    <file src="bin\x64\Release\DoenaSoft.CalculateDvdDiscId.dll" target="build\x64\DoenaSoft.CalculateDvdDiscId.dll" />
+    <file src="bin\x64\Release\DoenaSoft.CalculateDvdDiscId.xml" target="build\x64\DoenaSoft.CalculateDvdDiscId.xml" />
+
+    <file src="bin\x86\Release\DoenaSoft.CalculateDvdDiscId.dll" target="build\x86\DoenaSoft.CalculateDvdDiscId.dll" />
+    <file src="bin\x86\Release\DoenaSoft.CalculateDvdDiscId.xml" target="build\x86\DoenaSoft.CalculateDvdDiscId.xml" />
+    
+    <file src="DoenaSoft.CalculateDvdDiscId.props" target="build\net452" />
+    <file src="djdsoft.png" target="images\" />
+</files>
+</package>
