@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace DoenaSoft.CalculateDvdDiscId
+﻿namespace DoenaSoft.CalculateDvdDiscId
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+
     /// <summary>
     /// Based on US patent 6,871,012 B1
     /// http://patentimages.storage.googleapis.com/pdfs/US6871012.pdf
@@ -29,7 +27,7 @@ namespace DoenaSoft.CalculateDvdDiscId
             //The filenames of the VIDEO_TS directory are collected and sorted alphabetically
             var fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolderName), "*.*", SearchOption.TopDirectoryOnly);
 
-            var result = Calculate(drive, fileNames);
+            var result = (new Patent6871012B1Calculator(drive)).Calculate(fileNames);
 
             return result;
         }
@@ -49,7 +47,7 @@ namespace DoenaSoft.CalculateDvdDiscId
             var fileNames = Directory.GetFiles(videoFolderName, "VIDEO_TS.*", SearchOption.TopDirectoryOnly)
                 .Concat(Directory.GetFiles(videoFolderName, "VTS_01_0.*", SearchOption.TopDirectoryOnly));
 
-            var result = Calculate(drive, fileNames);
+            var result = (new Patent6871012B1Calculator(drive)).Calculate(fileNames);
 
             return result;
         }
@@ -74,146 +72,6 @@ namespace DoenaSoft.CalculateDvdDiscId
             {
                 throw new ArgumentException("Drive does not contain a video DVD!", nameof(driveLetter));
             }
-
-            return result;
-        }
-
-        private static string Calculate(DriveInfo drive, IEnumerable<string> fileNames)
-        {
-            var files = fileNames.Select(fileName => new FileInfo(fileName)).ToList();
-
-            files.Sort(CompareFiles);
-
-            var hashes = new List<byte[]>();
-
-            //Step 2:
-            //The file headers from each file are computed in the CRC.
-            foreach (var file in files)
-            {
-                AddFileMetaHash(file, hashes);
-            }
-
-            //Step 3:
-            //The data from the VMGI file ("VIDEO_TS\VIDEO_TS.IFO") is computed in the CRC.
-            //If present, the first 65,536 bytes of "VIDEO_TS.IFO are read and added to the CRC (if smaller then the entire file is added)
-            AddFileContentHash(drive, "VIDEO_TS.IFO", hashes);
-
-            //Note: On page 19 the patents talks about "the first VTSI file ('VIDEO_TS\VTS_xx_0.IFO')"
-            //      but on page 20 it explicitly specifies "VTS_01_0.IFO".
-            //Step 4:
-            //The data from the first VTSI file ("VIDEO_TS\VTS_xx_0.IFO") is computed in the CRC.
-            var vtsFileName = GetVtsFileName(drive);
-
-            //If present, the first 65,536 bytes of "VTS_01_0.IFO" are read and added to the CRC (if smaller then the entire file is added)
-            AddFileContentHash(drive, vtsFileName, hashes);
-
-            var hashBytes = hashes.SelectMany(bytes => bytes).ToArray();
-
-            var hash = Crc64.Calculate(hashBytes);
-
-            var result = hash.ToString("X").PadLeft(16, '0');
-
-            return result;
-        }
-
-        private static int CompareFiles(FileInfo left, FileInfo right)
-        {
-            string leftName = NormalizeFileName(left);
-
-            string rightName = NormalizeFileName(right);
-
-            int result = leftName.CompareTo(rightName);
-
-            return result;
-        }
-
-        /// <remarks>
-        /// UDF is case sensitive. The DVD standard mandates upper case filename, hence all compliant DVDs will have all upper case file names
-        /// in VIDEO_TS for the UDF filesystem.
-        /// However, just to be on the save side, make sure it is upper for non-compliant DVDs.
-        /// </remarks>
-        private static string NormalizeFileName(FileInfo file) => file.Name.ToUpper();
-
-        private static void AddFileMetaHash(FileInfo file, List<byte[]> hashes)
-        {
-            //For each filename in the list, the following structure is filled out and added to the CRC (all data fields are in LSB first): 
-            //- Unsigned 64 bit integer: dateTime(the time elapsed in 100 nanosecond intervals from Jan. 1, 1601)
-            //- unsigned 32 bit integer: dWFileSiZe
-            //- BYTE bFilename[filename Length]
-            //- BYTE bFilenameTermNull = 0
-
-            var diff = file.CreationTimeUtc - _baseDateUtc;
-
-            //unsigned 64 bit Integer: dateTime (the time elapsed in 100 nanosecond intervals from Jan. 1, 1601)
-            var hundredNanoSeconds = (ulong)(diff.TotalMilliseconds * 10_000);
-
-            var nanoSecondBytes = BitConverter.GetBytes(hundredNanoSeconds);
-
-            //unsigned 32 bit Integer: FileSize
-            var fileSize = (uint)file.Length;
-
-            var fileSizeBytes = BitConverter.GetBytes(fileSize);
-
-            //BYTE: Filename [filename Length]
-
-            var fileName = NormalizeFileName(file);
-
-            var nameBytes = Encoding.UTF8.GetBytes(fileName);
-
-            //all data fields are in LSB first
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(nanoSecondBytes);
-                Array.Reverse(fileSizeBytes);
-                Array.Reverse(nameBytes);      //untested if Encoding.UTF8.GetBytes() also needs to be reversed on a BigEndian system
-            }
-
-            var fileHashes = new List<byte[]>()
-            {
-                nanoSecondBytes,
-                fileSizeBytes,
-                nameBytes,
-                new byte[] { 0 }, //BYTE: FilenameTermNull=0
-            };
-
-            var fileHash = fileHashes.SelectMany(bytes => bytes).ToArray();
-
-            hashes.Add(fileHash);
-        }
-
-        private static void AddFileContentHash(DriveInfo drive, string fileName, List<byte[]> hashes)
-        {
-            var file = new FileInfo(Path.Combine(Path.Combine(drive.Name, VideoFolderName), fileName));
-
-            //If present
-            if (file.Exists)
-            {
-                using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    using (var br = new BinaryReader(fs))
-                    {
-                        //the first 65,536 bytes read and added to the CRC (if smaller then the entire file is added)
-                        var bytesToRead = file.Length >= MaxReadOutLength
-                            ? MaxReadOutLength
-                            : (int)file.Length;
-
-                        var content = br.ReadBytes(bytesToRead);
-
-                        hashes.Add(content);
-                    }
-                }
-            }
-        }
-
-        private static string GetVtsFileName(DriveInfo drive)
-        {
-            var fileNames = Directory.GetFiles(Path.Combine(drive.Name, VideoFolderName), "VTS_*_0.IFO", SearchOption.TopDirectoryOnly);
-
-            var files = fileNames.Select(fileName => new FileInfo(fileName)).ToList();
-
-            files.Sort(CompareFiles);
-
-            var result = files.FirstOrDefault()?.Name ?? "VTS_01_0.IFO";
 
             return result;
         }

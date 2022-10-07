@@ -76,8 +76,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Crc64.cs" />
+    <Compile Include="Crc64.cs">
+	  <DependentUpon>Patent6871012B1Calculator.cs</DependentUpon>
+    </Compile>
     <Compile Include="DvdDiscIdCalculator.cs" />
+    <Compile Include="Patent6871012B1Calculator.cs">
+     <DependentUpon>DvdDiscIdCalculator.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="CalculateDvdDiscIdLibrary.nuspec" />
