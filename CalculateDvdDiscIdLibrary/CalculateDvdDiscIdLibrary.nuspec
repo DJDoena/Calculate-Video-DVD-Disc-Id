@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>DoenaSoft.CalculateDvdDiscId</id>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <title>DoenaSoft.CalculateDvdDiscId</title>
     <authors>DJ Doena</authors>
     <icon>images\djdsoft.png</icon>
@@ -20,7 +20,10 @@
 
     <file src="bin\x86\Release\DoenaSoft.CalculateDvdDiscId.dll" target="build\x86\DoenaSoft.CalculateDvdDiscId.dll" />
     <file src="bin\x86\Release\DoenaSoft.CalculateDvdDiscId.xml" target="build\x86\DoenaSoft.CalculateDvdDiscId.xml" />
-    
+
+    <file src="bin\Release\DoenaSoft.CalculateDvdDiscId.dll" target="build\DoenaSoft.CalculateDvdDiscId.dll" />
+    <file src="bin\Release\DoenaSoft.CalculateDvdDiscId.xml" target="build\DoenaSoft.CalculateDvdDiscId.xml" />
+
     <file src="DoenaSoft.CalculateDvdDiscId.props" target="build\net452" />
     <file src="djdsoft.png" target="images\" />
     <file src="..\README.md" target="docs\" />
