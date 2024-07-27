@@ -10,34 +10,30 @@ on:
       
 env:
   SOURCE_URL: https://api.nuget.org/v3/index.json
-  SOLUTION_FILE: CalculateDvdDiscIdLibrary.sln
   PROJECT_FILE: CalculateDvdDiscIdLibrary.csproj
   PROJECT_FOLDER: CalculateDvdDiscIdLibrary
-  NUGET_SPEC: CalculateDvdDiscIdLibrary.nuspec
   BUILD_CONFIGURATION: Release
   
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     name: Update NuGet package
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
      
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-        
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.7
-     
-      - name: Restore Nuget
-        run: nuget.exe restore ${{ env.SOLUTION_FILE }}
-          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          source-url: ${{env.SOURCE_URL}}  
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}}
+
       - name: Build AnyCPU
-        run: msbuild.exe ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform="Any CPU"
+        run: dotnet build ${{env.PROJECT_FOLDER}}/${{env.PROJECT_FILE}} -c=${{env.BUILD_CONFIGURATION}} --no-incremental /p:Platform=AnyCPU
 
-      - name: Pack Nuget
-        run: nuget.exe pack ${{ env.PROJECT_FOLDER }}\${{ env.NUGET_SPEC }} -OutputDirectory ${{ env.PROJECT_FOLDER }}
-
-      - name: Push Nuget
-        run: nuget.exe push ${{ env.PROJECT_FOLDER }}\*.nupkg -ApiKey ${{secrets.NUGET_API_KEY}} -Source "${{env.SOURCE_URL}}"
+      - name: Pack
+        run: dotnet pack ${{ env.PROJECT_FOLDER }}/${{ env.PROJECT_FILE }} --no-build -c=${{env.BUILD_CONFIGURATION}} -o=./${{env.PROJECT_FOLDER}}/ -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+          
+      - name: Push generated package to Nuget.org
+        run: dotnet nuget push ${{env.PROJECT_FOLDER}}/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source "${{env.SOURCE_URL}}" --skip-duplicate

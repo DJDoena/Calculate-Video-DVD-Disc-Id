@@ -1,63 +1,45 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DE78E209-FE25-497E-A3D0-0D958C1EFE08}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>DoenaSoft.CalculateDvdDiscId</RootNamespace>
-    <AssemblyName>DoenaSoft.CalculateDvdDiscId</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>CalculateDvdDiscIdLibrary.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\DoenaSoft.CalculateDvdDiscId.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningsAsErrors>1591</WarningsAsErrors>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>bin\x64\Debug\DoenaSoft.CalculateDvdDiscId.xml</DocumentationFile>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningsAsErrors>1591</WarningsAsErrors>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Crc64.cs">
-      <DependentUpon>Patent6871012B1Calculator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DvdDiscIdCalculator.cs" />
-    <Compile Include="Patent6871012B1Calculator.cs">
-      <DependentUpon>DvdDiscIdCalculator.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CalculateDvdDiscIdLibrary.nuspec" />
-    <None Include="CalculateDvdDiscIdLibrary.snk" />
-    <None Include="DoenaSoft.CalculateDvdDiscId.props" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="djdsoft.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Platforms>AnyCPU</Platforms>
+		<OutputType>Library</OutputType>
+		<RootNamespace>DoenaSoft.CalculateDvdDiscId</RootNamespace>
+		<AssemblyName>DoenaSoft.CalculateDvdDiscId</AssemblyName>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>CalculateDvdDiscIdLibrary.snk</AssemblyOriginatorKeyFile>
+		<Title>DoenaSoft.CalculateDvdDiscId</Title>
+		<Company>Doena Soft.</Company>
+		<Authors>DJ Doena</Authors>
+		<Description>Calculates the Disc Id of a Video DVD for Windows the same way Windows XP, Vista, 7 and 8 had done and also Windows 10 before the 1809 update.</Description>
+		<Copyright>2021 - 2024</Copyright>
+		<PackageProjectUrl>https://github.com/DJDoena/Calculate-Video-DVD-Disc-Id</PackageProjectUrl>
+		<PackageIcon>djdsoft.png</PackageIcon>
+		<RepositoryUrl>https://github.com/DJDoena/Calculate-Video-DVD-Disc-Id</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>disc-id, dvdprofiler, invelos</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Version>1.0.5</Version>
+		<FileVersion>1.0.5</FileVersion>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<DebugType>portable</DebugType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\djdsoft.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="readme.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
 </Project>
