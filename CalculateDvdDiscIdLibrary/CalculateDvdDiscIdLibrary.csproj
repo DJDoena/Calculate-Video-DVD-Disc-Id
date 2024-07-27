@@ -29,7 +29,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\djdsoft.png">
+		<None Include="djdsoft.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
