@@ -22,7 +22,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Version>1.0.5</Version>
 		<FileVersion>1.0.5</FileVersion>
-		<PackageReadmeFile>..\readme.md</PackageReadmeFile>
+		<!--<PackageReadmeFile>..\readme.md</PackageReadmeFile>-->
 		<DebugType>portable</DebugType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -35,11 +35,13 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
+	<!--
+		<ItemGroup>
 		<None Update="..\readme.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+	-->
 
 </Project>
