@@ -22,26 +22,21 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Version>1.0.5</Version>
 		<FileVersion>1.0.5</FileVersion>
-		<!--<PackageReadmeFile>..\readme.md</PackageReadmeFile>-->
 		<DebugType>portable</DebugType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Include="djdsoft.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-
-	<!--
-		<ItemGroup>
-		<None Update="..\readme.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-	-->
 
 </Project>
