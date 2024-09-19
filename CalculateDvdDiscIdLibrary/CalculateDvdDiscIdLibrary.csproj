@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<AssemblyName>DoenaSoft.CalculateDvdDiscId</AssemblyName>
+		<RootNamespace>DoenaSoft.CalculateDvdDiscId</RootNamespace>
+		<OutputType>Library</OutputType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Platforms>AnyCPU</Platforms>
-		<OutputType>Library</OutputType>
-		<RootNamespace>DoenaSoft.CalculateDvdDiscId</RootNamespace>
-		<AssemblyName>DoenaSoft.CalculateDvdDiscId</AssemblyName>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<DebugType>portable</DebugType>
+		<IncludeSymbols>true</IncludeSymbols>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>CalculateDvdDiscIdLibrary.snk</AssemblyOriginatorKeyFile>
 		<Title>DoenaSoft.CalculateDvdDiscId</Title>
-		<Company>Doena Soft.</Company>
-		<Authors>DJ Doena</Authors>
-		<Description>Calculates the Disc Id of a Video DVD for Windows the same way Windows XP, Vista, 7 and 8 had done and also Windows 10 before the 1809 update.</Description>
-		<Copyright>2021 - 2024</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/DJDoena/Calculate-Video-DVD-Disc-Id</PackageProjectUrl>
-		<PackageIcon>djdsoft.png</PackageIcon>
 		<RepositoryUrl>https://github.com/DJDoena/Calculate-Video-DVD-Disc-Id</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>disc-id, dvdprofiler, invelos</PackageTags>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>djdsoft.png</PackageIcon>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Description>Calculates the Disc Id of a Video DVD for Windows the same way Windows XP, Vista, 7 and 8 had done and also Windows 10 before the 1809 update.</Description>
+		<Company>Doena Soft.</Company>
+		<Authors>DJ Doena</Authors>
+		<Copyright>2021 - 2024</Copyright>
 		<Version>1.0.5</Version>
 		<FileVersion>1.0.5</FileVersion>
-		<DebugType>portable</DebugType>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
