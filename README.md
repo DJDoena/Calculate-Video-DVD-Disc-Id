@@ -2,7 +2,7 @@
 
 Cataloguing software use an algorithm to identify discs that are entered into a PC's drive. These algorithms are different for audio CDs, video DVDs and video Blu-rays. 
 
-For DVDs a programmer can use the IDvdInfo2::GetDiscID interface (https://docs.microsoft.com/en-us/windows/win32/api/strmif/nf-strmif-idvdinfo2-getdiscid)
+For DVDs, a programmer can use the IDvdInfo2::GetDiscID interface (https://docs.microsoft.com/en-us/windows/win32/api/strmif/nf-strmif-idvdinfo2-getdiscid)
 
 This interface used to work on Windows XP, Vista, Windows 7, Windows 8.x and Windows 10 until Windows 10 version 1809. 
 
